@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebSocket Example</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+
+      #postsContainer {
+        list-style-type: none;
+        padding: 0;
+      }
+
+      .post {
+        border: 1px solid #ccc;
+        margin: 5px;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WebSocket Example</h1>
+    <ul id="postsContainer"></ul>
+
+    <script>
+      const socket = new WebSocket("ws://localhost:8000/ws");
+
+      socket.addEventListener("message", (event) => {
+        const postsList = JSON.parse(event.data);
+        updatePayloadList(postsList);
+      });
+
+      function updatePayloadList(postsList) {
+        const postsContainer = document.getElementById("postsContainer");
+        postsContainer.innerHTML = "";
+
+        postsList.forEach((post) => {
+          const listItem = document.createElement("li");
+          listItem.className = "post";
+          listItem.innerHTML = `
+                <strong>${post.name}</strong> (${post.user_id}) - ${post.content}<br>
+                <small>${post.created_at}</small>
+            `;
+          postsContainer.insertBefore(listItem, postsContainer.firstChild);
+        });
+      }
+    </script>
+  </body>
+</html>
